@@ -24,7 +24,7 @@ const EntryRoom = () => {
                             <Input/>
                         </InputContainer>
                         <InputContainer>
-                            <JoinButton>
+                            <JoinButton onClick={(e)=>{e.preventDefault()}}>
                                 Join
                             </JoinButton>
                         </InputContainer>
