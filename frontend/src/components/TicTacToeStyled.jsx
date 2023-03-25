@@ -112,6 +112,7 @@ export const SpaceRightMid = styled(Space)`
     border-bottom: 3px solid #7ab1bb;
     margin-right: 3px;
 `
+
 export const SpaceRightBottom = styled(Space)`
     width: 30%;
     height: 33%;

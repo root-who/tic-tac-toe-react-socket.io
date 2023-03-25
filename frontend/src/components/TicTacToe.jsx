@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Background } from "./EntryRoomStyled";
 import { Circle, Container, SpaceCenter, SpaceLeftBottom, SpaceLeftMid, SpaceLeftTop, SpaceMidBottom, SpaceMidTop, SpaceRightBottom, SpaceRightMid, SpaceRightTop, X } from "./TicTacToeStyled";
+import { useLocation } from "react-router-dom";
 
+const TicTacToe = ({socket}) => {
 
-const TicTacToe = ({players}) => {
-
-    // eslint-disable-next-line
-    const [playerTurn, setPlayerTurn] = useState([
-        {
-            "player": "Pedro",
-            "turn":"on",
-            "points": 3        
-        },
-        {
-            "player": "João",
-            "turn":"off",
-            "points": 2 
-        }
-    ])
+    const location = useLocation();
+    const data = location.state;
+    const [player, setPlayer] = useState(data.userName)
+    const [myMove, setMyMove] = useState(false)
+    const [marker, setMarker] = useState("x")
+    
 
     const [TicTacToeGame, setTicTacToeGame]= useState([
         ["", "", ""],
@@ -25,48 +18,36 @@ const TicTacToe = ({players}) => {
         ["", "", ""],
     ])
     
-    useEffect(()=>{
-        console.log(playerTurn)
-    },[TicTacToeGame, playerTurn])
-
-    function handleGame (row, column){
-        let TicTacToeMove = TicTacToeGame
-        if(playerTurn[0].turn === "on"){
-            TicTacToeMove[row][column] = "x"
-            setPlayerTurn(prev=>{
-                return [
-                {
-                    "player": prev[0].player,
-                    "turn":"off",
-                    "points": prev[0].points        
-                },
-                {
-                    "player":  prev[1].player,
-                    "turn":"on",
-                    "points": prev[1].points 
-                }
-            ]
-            })
-        }else{
-            TicTacToeMove[row][column] = "circle"
-            setPlayerTurn([
-                {
-                    "player1": "",
-                    "turn":"on",
-                    "points": 0        
-                },
-                {
-                    "player2": "",
-                    "turn":"off",
-                    "points": 0 
-                }
-            ])
+    async function handleGame (row, column){
+        let NewTicTacToeGame = TicTacToeGame
+        if(myMove){
+            const socketMessage = {
+                room: data.room,
+                player: data.userName,
+                space: [row, column],
+                myMove: myMove,
+                marker: marker
+            }
+            await socket.emit("make_move", socketMessage)
+            setMyMove(false)
+            NewTicTacToeGame[row][column] = marker
+            setTicTacToeGame(NewTicTacToeGame)
         }
-        setTicTacToeGame(prev=>{
-            return TicTacToeMove
-        })
     }
 
+    useEffect(()=>{
+        socket.on("receive_move", (data)=>{
+            var NewTicTacToeGame = TicTacToeGame
+            NewTicTacToeGame[data.space[0]][data.space[1]] = data.marker
+            setTicTacToeGame(NewTicTacToeGame)
+            setMyMove(data.myMove)
+        })
+        socket.on("define_marker", (data)=>{
+            setMarker(data)
+            setMyMove(true)
+        })
+
+    },[TicTacToeGame, data, socket, myMove])
 
     return (
         <>

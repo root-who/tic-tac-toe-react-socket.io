@@ -1,7 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Background, Container, Form,  GetStart, GetStartText, Image, ImageContainer, Input, InputContainer, JoinButton, Label } from "./EntryRoomStyled";
 import IMAGE from '../assets/EntryRoomImage.png'
-const EntryRoom = () => {
+import { useNavigate } from "react-router-dom";
+
+
+const EntryRoom = ({socket}) => {
+    const [userName, setUserName] = useState("");
+    const [room, setRoom] = useState("");
+    const [marker, setMaker] = useState("")
+    const navigate = useNavigate()
+
+    const joinRoom = ()=>{
+        if(userName !== "" && room !== ""){
+            socket.emit("join_room", {room: room, player: userName})
+            navigate('/room', {
+                    state: { 
+                        userName: userName,
+                        room: room,
+                    },
+            });
+        }
+    }
+
+    useEffect(()=>{
+        
+    },[])
+
+
     return (
         <>
             <Background>
@@ -17,14 +42,28 @@ const EntryRoom = () => {
                     <Form>
                         <InputContainer>
                             <Label>Your name</Label>
-                            <Input/>
+                            <Input
+                                defaultValue={userName}
+                                onChange={(e)=>{setUserName(e.target.value)}}
+                            />
                         </InputContainer>
                         <InputContainer>
                             <Label>Code room</Label>
-                            <Input/>
+                            <Input
+                                defaultValue={room}
+                                onChange={(e)=>{setRoom(e.target.value)}}
+                            />
                         </InputContainer>
                         <InputContainer>
-                            <JoinButton onClick={(e)=>{e.preventDefault()}}>
+                            <JoinButton 
+                                onClick={
+                                    (e)=>{
+                                        e.preventDefault()
+                                        joinRoom()
+                                    }
+                                }
+                                
+                            >
                                 Join
                             </JoinButton>
                         </InputContainer>
