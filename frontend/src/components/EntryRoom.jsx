@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 const EntryRoom = ({socket}) => {
     const [userName, setUserName] = useState("");
     const [room, setRoom] = useState("");
-    const [marker, setMaker] = useState("")
     const navigate = useNavigate()
 
     const joinRoom = ()=>{
@@ -23,7 +22,7 @@ const EntryRoom = ({socket}) => {
     }
 
     useEffect(()=>{
-        
+
     },[])
 
 

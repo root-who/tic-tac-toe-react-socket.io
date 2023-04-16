@@ -3,12 +3,14 @@ import styled from 'styled-components'
 export const Background = styled.div`
     width:100%;
     height:100vh;
+    text-align: center;
     background: radial-gradient(circle at top left,transparent 9%, #fe1717 10% ,#fe1717 15% , transparent 16%) , radial-gradient(circle at bottom left,transparent 9%, #fe1717 10% ,#fe1717 15% , transparent 16%), radial-gradient(circle at top right ,transparent 9%, #fe1717 10% ,#fe1717 15% , transparent 16%) , radial-gradient(circle at bottom right,transparent 9%, #fe1717 10% ,#fe1717 15% , transparent 16%),radial-gradient(circle, transparent 25%, #ffffff  26%),linear-gradient(45deg, transparent 46%, #fe1717 47%, #fe1717 52%, transparent 53%), linear-gradient(135deg, transparent 46%, #fe1717 47%, #fe1717 52%, transparent 53%);
     background-size: 5em 5em;
     background-color: #ffffff;
     opacity: 0.6;
-    display: flex;
-    justify-content: center;
+    position: absolute;
+    /* display: flex; */
+    /* justify-content: center; */
 `
 
 export const Container = styled.div`

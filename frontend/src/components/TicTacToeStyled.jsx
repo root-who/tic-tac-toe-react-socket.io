@@ -3,13 +3,11 @@ import styled from "styled-components";
 import {AiOutlinePlus} from 'react-icons/ai'
 import {FiCircle} from 'react-icons/fi'
 
-
-
 export const Container = styled.div`
     width: 500px;
     height: 500px;
-    padding: 2rem 2rem 2.5rem 2rem;
-    margin: auto;
+    padding: 2rem 2rem 3.5rem 2rem;
+    margin: auto auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,6 +16,8 @@ export const Container = styled.div`
     background-color: white;
     box-shadow: rgb(0 0 0 / 20%) 0px 3px 13px 12px,rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 20%) 3px 5px 3px -2px;
 `
+
+
 export const X = styled(AiOutlinePlus)`
     width: 100%;
     height: 100%;
@@ -34,6 +34,34 @@ export const Circle = styled(FiCircle)`
     margin: auto;
     position: relative;
     display: ${props=>props.show? "inline": "none"}
+`
+
+export const RiskMarkerHorizontal = styled.div`
+        position: relative;
+        width: 500px;
+        top: ${props=>props.position === "top" ? "calc(100%/6 + 9px)": props.position === "mid" ? "calc(100%/2 + 9px)": "calc(100%/1.20 + 9px)"};
+        border: 3px solid #fe1717;
+        margin: auto;
+        z-index: 2;
+`
+
+export const RiskMarkerVertical = styled.div`
+        position: relative;
+        width: 500px;
+        transform: rotate(90deg);
+        top: calc(50% + 9px);
+        left: ${props=>props.position === "left" ? "calc(-33% + 9px)" : props.position ==="right" ? "calc(30% + 9px)": ""};
+        border: 3px solid #fe1717;
+        z-index: 2;
+`
+
+export const RiskMarkerDiagonal = styled.div`
+        position: relative;
+        width: 500px;
+        transform: ${props => props.position === "first" ? "rotate(47.5deg)" : "rotate(132.5deg)"};
+        top: calc(50% + 9px);
+        border: 3px solid #fe1717;
+        z-index: 2;
 `
 
 export const Space = styled.div`

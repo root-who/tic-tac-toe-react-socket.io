@@ -1,12 +1,7 @@
-import React, { useState } from 'react'
-import EntryRoom from './components/EntryRoom';
-import TicTacToe from './components/TicTacToe';
+import React from 'react'
 import GlobalStyle from './globalStyles';
-import io from 'socket.io-client'
 import { RouterProvider } from 'react-router-dom';
 import { router } from './Router';
-
-
 
 function App() {
   
