@@ -8,9 +8,8 @@ export const Background = styled.div`
     background-size: 5em 5em;
     background-color: #ffffff;
     opacity: 0.6;
-    position: absolute;
-    /* display: flex; */
-    /* justify-content: center; */
+    display: flex;
+    justify-content: center;
 `
 
 export const Container = styled.div`

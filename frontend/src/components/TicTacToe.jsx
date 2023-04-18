@@ -1,29 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import TicTacToeTable from "./TicTacToeTable";
+import { Background } from "./styled_components/EntryRoomStyled";
+import Score from "./ScoreGame";
+import { Container } from "./styled_components/TicTacToeGameStyled";
+import { editGameInfo, getGameInfo, getGameTable } from "../utils/storage";
 
 const TicTacToe = ({socket}) => {
 
     const location = useLocation();
     const data = location.state;
-    const [myMove, setMyMove] = useState(false)
-    const [marker, setMarker] = useState("x")
+    const [opponent, setOpponent] = useState(getGameInfo()?.opponent && {
+        userName : getGameInfo().opponent,
+        marker : getGameInfo().marker === "x" ? "circle" : "x"
+    })
+    const [myMove, setMyMove] = useState(getGameInfo()?.myMove ? getGameInfo().myMove : false)
+    const [marker, setMarker] = useState(getGameInfo()?.marker ? getGameInfo().marker: "x")
     const [game, setGame] = useState({
         hasFinish: false,
         position: "",
         marker: ""
     })
 
-    const [TicTacToeGame, setTicTacToeGame]= useState([
+    const [TicTacToeGame, setTicTacToeGame]= useState(getGameTable() ? getGameTable() :
+    [
         ["", "", ""],
         ["", "", ""],
         ["", "", ""],
     ])
+   
     
     async function handleGame (row, column){
         let NewTicTacToeGame = TicTacToeGame
-        console.log(myMove)
-        
         if(myMove){
             const socketMessage = {
                 room: data.room,
@@ -34,12 +42,23 @@ const TicTacToe = ({socket}) => {
             }
             await socket.emit("make_move", socketMessage)
             setMyMove(false)
+            editGameInfo({
+               myMove: false
+            })
             NewTicTacToeGame[row][column] = marker
             setTicTacToeGame(NewTicTacToeGame)
         }
     }
 
     useEffect(()=>{
+        window.onload = function() {
+            setTimeout(()=>{
+                socket.emit("join_room", {room: data.room, player: data.userName})
+            }, 2000)
+        };
+    
+
+        
         const setWinHorizontalPosition = (positionNumber) => {
             return positionNumber === 0 ? "top" : positionNumber === 1 ? "mid" : "bottom"
         }
@@ -60,7 +79,6 @@ const TicTacToe = ({socket}) => {
                             column === TicTacToeGame[keyRow+2][keyColumn]
                         ){
                             win = true
-                                                       
                             setGame({
                                 hasFinish: true,
                                 position: "vertical",
@@ -140,26 +158,67 @@ const TicTacToe = ({socket}) => {
                     position: "",
                     marker: ""
                 })
+                editGameInfo({
+                    marker : marker === "x" ? "x" : "circle"
+                })
+                setOpponent({
+                    userName: opponent.userName,
+                    marker: marker === "x" ? "x" : "circle"
+                })
             }, 1500)
         }
+
+        async function onGameStart(){
+            await socket.emit("user_info", {
+                room: data.room,
+                player : data.userName,
+                marker : "circle"
+            })
+        }
+
         socket.on("receive_move", (data)=>{
             var NewTicTacToeGame = TicTacToeGame
             NewTicTacToeGame[data.space[0]][data.space[1]] = data.marker
             setTicTacToeGame(NewTicTacToeGame)
             setMyMove(data.myMove)
+            editGameInfo({
+               myMove: data.myMove
+            })
         })
+
         socket.on("define_marker", (data)=>{
             setMarker(data)
             setMyMove(true)
+            onGameStart()
+            editGameInfo({
+               marker : data,
+               myMove: true
+            })
+        })
+
+        socket.on("opponent_info", (data)=>{
+            setOpponent({
+                userName: data.player,
+                marker: data.marker
+            })
+            editGameInfo({
+               opponent : data.player,
+               marker : data.marker === "x" ? "circle" : "x",
+            })
         })
         isGameOver() && restartGame() 
         checkWin() && restartGame() 
 
-    },[TicTacToeGame, data, socket, myMove, marker])
+    },[TicTacToeGame, data, socket, myMove, marker, opponent])
 
     return (
         <>
-        <TicTacToeTable game={game} TicTacToeGame={TicTacToeGame} handleGame={handleGame}/>
+        <Background>
+            <Container>
+                <TicTacToeTable game={game} TicTacToeGame={TicTacToeGame} handleGame={handleGame}/>
+                <Score opponent={opponent} user={data.userName} />
+            </Container>
+        </Background>
         </>
     );
 }

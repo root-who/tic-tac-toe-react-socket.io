@@ -17,19 +17,23 @@ const io = new Server(server, {
 io.on("connection", (socket)=>{
     console.log(`User Connected ${socket.id}`)
 
-socket.on("join_room", (data)=>{
-        socket.join(data.room)
-        socket.to(data.room).emit("define_marker", "circle")
-        console.log(`User with ID: ${socket.id} joined in room: ${data.room}`)
-    })
+    socket.on("join_room", (data)=>{
+            socket.join(data.room)
+            socket.to(data.room).emit("define_marker", "circle")
+            console.log(`User with ID: ${socket.id} joined in room: ${data.room}`)
+        })
 
     socket.on("make_move", (data)=>{
-        console.log(data)
         socket.to(data.room).emit("receive_move", data)
     })
 
     socket.on("disconnect", ()=>{
         console.log("User Disconnected", socket.id)
+    })
+
+    socket.on("user_info", (data)=>{
+        console.log(data)
+        socket.to(data.room).emit("opponent_info", data)
     })
 })
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Background, Container, Form,  GetStart, GetStartText, Image, ImageContainer, Input, InputContainer, JoinButton, Label } from "./EntryRoomStyled";
+import { Background, Container, Form,  GetStart, GetStartText, Image, ImageContainer, Input, InputContainer, JoinButton, Label } from "./styled_components/EntryRoomStyled";
 import IMAGE from '../assets/EntryRoomImage.png'
 import { useNavigate } from "react-router-dom";
+import { saveGameInfo } from "../utils/storage";
 
 
 const EntryRoom = ({socket}) => {
@@ -12,6 +13,8 @@ const EntryRoom = ({socket}) => {
     const joinRoom = ()=>{
         if(userName !== "" && room !== ""){
             socket.emit("join_room", {room: room, player: userName})
+            saveGameInfo({room: room, player: userName})
+            socket.emit("user_info", {room: room, player: userName, marker: "x"})
             navigate('/room', {
                     state: { 
                         userName: userName,
@@ -22,7 +25,7 @@ const EntryRoom = ({socket}) => {
     }
 
     useEffect(()=>{
-
+        saveGameInfo(null)
     },[])
 
 
